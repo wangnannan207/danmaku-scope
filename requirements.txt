@@ -1,0 +1,6 @@
+# 爬虫模块 fetcher.py 仅使用 Python 标准库，无需安装
+# 以下为本项目其余部分的依赖：
+streamlit>=1.30
+plotly>=5.18
+pandas>=2.0
+jieba>=0.42
