@@ -31,43 +31,125 @@ st.set_page_config(page_title="弹幕显微镜 · Danmaku Scope", page_icon="�
 PINK, BLUE, DARK = "#FB7299", "#00A1D6", "#1F2937"
 PRESET_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "preset")
 
-# ---------------- 全局样式（B站蓝粉主题） ----------------
+# ---------------- 全局样式（B站蓝粉主题 · 美化版） ----------------
 
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
 html, body, [class*="css"] {{ font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif; }}
+
+/* ---------- 隐藏系统默认元素 ---------- */
+#MainMenu, footer, header {{ visibility: hidden; }}
+
+/* ---------- 动态渐变标题区 ---------- */
 .hero {{
-    background: linear-gradient(120deg, #00A1D6 0%, #23ADE5 45%, #FB7299 100%);
-    border-radius: 18px; padding: 34px 40px 28px 40px; color: white;
-    margin-bottom: 18px; box-shadow: 0 8px 28px rgba(0,161,214,.25);
+    position: relative; overflow: hidden;
+    background: linear-gradient(120deg, #00A1D6, #23ADE5, #FB7299, #00A1D6);
+    background-size: 300% 300%;
+    animation: heroFlow 10s ease infinite;
+    border-radius: 20px; padding: 40px 44px 32px 44px; color: white;
+    margin-bottom: 20px; box-shadow: 0 12px 34px rgba(0,161,214,.28);
 }}
-.hero h1 {{ font-size: 2.1rem; font-weight: 900; letter-spacing: 1px; margin: 0 0 6px 0; }}
-.hero p {{ font-size: 1.02rem; opacity: .95; margin: 0; }}
+@keyframes heroFlow {{
+    0% {{ background-position: 0% 50%; }}
+    50% {{ background-position: 100% 50%; }}
+    100% {{ background-position: 0% 50%; }}
+}}
+.hero::after {{
+    content: ""; position: absolute; right: -60px; top: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255,255,255,.14); filter: blur(2px);
+}}
+.hero::before {{
+    content: ""; position: absolute; right: 90px; bottom: -80px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,.10);
+}}
+.hero h1 {{ font-size: 2.3rem; font-weight: 900; letter-spacing: 1px; margin: 0 0 8px 0; }}
+.hero p {{ font-size: 1.05rem; opacity: .95; margin: 0; }}
 .badge {{
     display: inline-block; background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.5);
-    border-radius: 999px; padding: 2px 14px; font-size: .82rem; margin-right: 8px; margin-top: 10px;
+    border-radius: 999px; padding: 3px 16px; font-size: .82rem; margin-right: 8px; margin-top: 12px;
+    backdrop-filter: blur(4px);
 }}
+
+/* ---------- 输入区卡片 ---------- */
+.input-card {{
+    background: #FFFFFF; border: 1px solid #E3F2FA; border-radius: 16px;
+    padding: 18px 20px; box-shadow: 0 4px 18px rgba(0,161,214,.08); margin-bottom: 10px;
+}}
+
+/* ---------- 指标卡片 ---------- */
 .metric-card {{
     background: linear-gradient(180deg, #FFFFFF, #F0F7FB); border: 1px solid #D6ECF7;
-    border-radius: 14px; padding: 16px 10px 10px 10px; text-align: center;
+    border-radius: 14px; padding: 16px 10px 12px 10px; text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    transition: transform .15s, box-shadow .15s;
 }}
+.metric-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,161,214,.16); }}
 .metric-card .num {{ font-size: 1.55rem; font-weight: 900; color: {BLUE}; }}
 .metric-card .num.pink {{ color: {PINK}; }}
 .metric-card .lbl {{ font-size: .85rem; color: #6B7280; margin-top: 2px; }}
+
+/* ---------- 章节标题 ---------- */
 .section-title {{
     font-size: 1.25rem; font-weight: 800; color: {DARK};
     border-left: 5px solid {PINK}; padding-left: 10px; margin: 26px 0 10px 0;
 }}
+
+/* ---------- 按钮 ---------- */
 .stButton > button {{
     background: linear-gradient(90deg, {BLUE}, {PINK}); color: white; border: none;
-    border-radius: 10px; font-weight: 700; font-size: 1rem; padding: .55rem 1rem;
-    box-shadow: 0 4px 14px rgba(251,114,153,.30); transition: transform .12s;
+    border-radius: 12px; font-weight: 700; font-size: 1rem; padding: .55rem 1rem;
+    box-shadow: 0 4px 14px rgba(251,114,153,.30); transition: transform .12s, box-shadow .12s;
 }}
-.stButton > button:hover {{ transform: translateY(-2px); color: white; }}
+.stButton > button:hover {{ transform: translateY(-2px); box-shadow: 0 8px 22px rgba(251,114,153,.42); color: white; }}
+.stDownloadButton > button {{
+    background: white; color: {BLUE}; border: 1.5px solid {BLUE};
+    border-radius: 10px; font-weight: 600;
+}}
+.stDownloadButton > button:hover {{ color: {PINK}; border-color: {PINK}; }}
+
+/* ---------- 标签页美化 ---------- */
+div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
+    gap: 8px; background: #F0F7FB; border-radius: 14px; padding: 6px;
+}}
+div[data-testid="stTabs"] button[data-baseweb="tab"] {{
+    border-radius: 10px; font-weight: 700; color: #6B7280;
+    padding: 8px 22px; transition: all .15s;
+}}
+div[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] {{
+    background: linear-gradient(90deg, {BLUE}, {PINK}); color: white !important;
+    box-shadow: 0 4px 12px rgba(251,114,153,.30);
+}}
+
+/* ---------- 指标组件 ---------- */
 div[data-testid="stMetric"] {{
     background: #F0F7FB; border: 1px solid #D6ECF7; border-radius: 12px; padding: 10px;
+}}
+
+/* ---------- 引导步骤卡片 ---------- */
+.step-card {{
+    background: linear-gradient(180deg, #FFFFFF, #F5FAFD); border: 1px solid #D6ECF7;
+    border-radius: 16px; padding: 22px 20px; height: 100%;
+    box-shadow: 0 4px 16px rgba(0,161,214,.07);
+    transition: transform .15s, box-shadow .15s;
+}}
+.step-card:hover {{ transform: translateY(-4px); box-shadow: 0 10px 26px rgba(0,161,214,.16); }}
+.step-card .step-num {{
+    display: inline-block; width: 34px; height: 34px; line-height: 34px; text-align: center;
+    border-radius: 50%; color: white; font-weight: 900; font-size: 1rem; margin-bottom: 10px;
+    background: linear-gradient(135deg, {BLUE}, {PINK});
+}}
+.step-card h3 {{ font-size: 1.05rem; font-weight: 800; color: {DARK}; margin: 0 0 6px 0; }}
+.step-card p {{ font-size: .88rem; color: #6B7280; margin: 0; line-height: 1.6; }}
+
+/* ---------- 底部页脚 ---------- */
+.footer-bar {{
+    margin-top: 34px; border-radius: 14px; padding: 16px 22px; color: white;
+    background: linear-gradient(90deg, {BLUE}, {PINK});
+    font-size: .85rem; text-align: center; letter-spacing: .5px;
+    box-shadow: 0 6px 18px rgba(0,161,214,.22);
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -118,12 +200,14 @@ st.markdown("""
 presets = load_presets()
 
 with st.container():
+    st.markdown('<div class="input-card">', unsafe_allow_html=True)
     c1, c2 = st.columns([3, 1])
     with c1:
         bvid = st.text_input("视频 BV 号", placeholder="例如 BV1GJ411x7h7",
                              label_visibility="collapsed")
     with c2:
         go_btn = st.button("🚀 开始解剖", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 preset_names = {bv: f"《{p['info']['title'][:22]}》" for bv, p in presets.items()}
 pc1, pc2 = st.columns([1, 2])
@@ -189,6 +273,21 @@ elif preset_sel and preset_sel != "（不使用）":
         st.info(f"📦 已载入预置数据集：《{presets[bv]['info']['title']}》（{len(presets[bv]['df'])} 条弹幕）")
 
 if "info" not in st.session_state:
+    # ---------- 空状态引导 ----------
+    st.markdown('<div class="section-title">🧭 三步上手</div>', unsafe_allow_html=True)
+    s1, s2, s3 = st.columns(3)
+    with s1:
+        st.markdown("""<div class="step-card"><div class="step-num">1</div>
+        <h3>输入 BV 号</h3><p>在上方输入框粘贴任意 B 站视频网址中的 BV 号
+        （如 BV1GJ411x7h7），点击「开始解剖」。</p></div>""", unsafe_allow_html=True)
+    with s2:
+        st.markdown("""<div class="step-card"><div class="step-num">2</div>
+        <h3>全自动处理</h3><p>系统自动采集弹幕、清洗噪音、写入 SQLite 数据库，
+        全程约 10 秒，无需任何操作。</p></div>""", unsafe_allow_html=True)
+    with s3:
+        st.markdown("""<div class="step-card"><div class="step-num">3</div>
+        <h3>交互式探索</h3><p>用左侧筛选器联动查询，查看高能时刻、情绪曲线、
+        热词画像与观众行为分析。</p></div>""", unsafe_allow_html=True)
     st.stop()
 
 info = st.session_state["info"]
@@ -368,5 +467,6 @@ with tab3:
     st.markdown('<div class="section-title">描述性统计摘要</div>', unsafe_allow_html=True)
     st.json(basic_stats(df.to_dict("records")))
 
-st.divider()
-st.caption("弹幕显微镜 Danmaku Scope · 《大数据导论》形式二实践项目 · 数据来源：B站公开接口 · 样本量≤5000条")
+st.markdown("""<div class="footer-bar">
+弹幕显微镜 Danmaku Scope · 《大数据导论》形式二实践项目 · 数据来源：B站公开接口 · 样本量≤5000条
+</div>""", unsafe_allow_html=True)
